@@ -1,0 +1,22 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Middleware\PermissionMiddleware;
+
+class SuperAdminPermissionMiddleware extends PermissionMiddleware
+{
+    public function handle($request, Closure $next, $permission, $guard = null)
+    {
+        $authGuard = Auth::guard($guard);
+        $user = $authGuard->user();
+
+        if ($user && method_exists($user, 'isSuperAdmin') && $user->isSuperAdmin()) {
+            return $next($request);
+        }
+
+        return parent::handle($request, $next, $permission, $guard);
+    }
+}

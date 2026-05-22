@@ -1,0 +1,18 @@
+File	What we addressed
+
+app/Http/Middleware/HandleInertiaRequests.php	array_merge() vs Collection
+app/Http/Controllers/Auth/AuthenticatedSessionController.php	Login history + created_by
+app/Models/LoginHistory.php (if you added it)	created_by in $fillable
+.env	SQL Server DB_* (and possibly APP_DEBUG)
+config/database.php	sqlsrv TLS: Encrypt / TrustServerCertificate
+app/Observers/UserObserver.php	Referral code update without save() on identity
+app/Helpers/helper.php	copySettingsFromSuperAdmin: replace insertOrIgnore with updateOrCreate loop
+app/Models/User.php
+bootstrap/app.php
+app/Http/Controllers/MediaController.php
+
+
+Add New Files:
+app/Http/Middleware/SuperAdminPermissionMiddleware.php
+app/Http/Middleware/SuperAdminRoleMiddleware.php
+app/Http/Middleware/SuperAdminRoleOrPermissionMiddleware.php

@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Invoke-WebRequest -Uri \"https://github.com/microsoft/msphpsql/releases/download/v5.12.0/SQLSRV_5.12.0.zip\" -OutFile \"$env:TEMP\\\\SQLSRV_5.12.0.zip\" -UseBasicParsing; Write-Host \"Downloaded successfully\")",
+      "PowerShell($r = Invoke-WebRequest -Uri \"http://ess.efasttrade.com.test/\" -UseBasicParsing; $r.Content | Select-String 'type=\"module\"|link rel=\"modulepreload\"|vite|build/assets' | Select-Object -First 10 | ForEach-Object { $_.Line.Trim\\(\\).Substring\\(0, [Math]::Min\\(200, $_.Line.Trim\\(\\).Length\\)\\) })",
+      "Bash(Get-ChildItem -Path \"c:\\\\laragon\\\\www\\\\ess.efasttrade.com\" -Force)",
+      "Bash(Select-Object Name, Mode)",
+      "Bash(php artisan *)",
+      "Bash(findstr /i \"claim\")",
+      "PowerShell(Set-Location \"c:\\\\laragon\\\\www\\\\ess.efasttrade.com\"; $output = php artisan migrate:status 2>&1; $output | Where-Object { $_ -match \"claim\" })",
+      "Bash(php -l app/Http/Controllers/ClaimController.php)",
+      "Bash(php -l routes/web.php)",
+      "Bash(npx tsc *)"
+    ]
+  }
+}

@@ -1,0 +1,1 @@
+export { ClaimAmountCard } from './ClaimAmountCard';
