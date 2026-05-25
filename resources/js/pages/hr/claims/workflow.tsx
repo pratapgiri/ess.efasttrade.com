@@ -35,10 +35,11 @@ import { CLAIM_TYPES, getClaimTypeLabel } from '@/config/claims';
 import { router, usePage } from '@inertiajs/react';
 import type { ClaimTypeKey } from '@/config/claims';
 import type { WorkflowLevel, WorkflowListItem } from '@/types/claims';
+import { randomUUID } from '@/utils/crypto-polyfill';
 
 function newLevel(serial: number): WorkflowLevel {
     return {
-        id: crypto.randomUUID(),
+        id: randomUUID(),
         serial_number: serial,
         emp_type: 'Manager',
         approver_user_id: '',
@@ -81,7 +82,7 @@ export default function ClaimWorkflowPage() {
         setWorkflowClaimType(wf.claim_type);
         setLevels(
             wf.levels.length > 0
-                ? wf.levels.map((l) => ({ ...l, id: l.id || crypto.randomUUID() }))
+                ? wf.levels.map((l) => ({ ...l, id: l.id || randomUUID() }))
                 : [newLevel(1)]
         );
         setModalOpen(true);

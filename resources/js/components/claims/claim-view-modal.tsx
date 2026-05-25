@@ -23,6 +23,7 @@ interface ClaimViewModalProps {
     onOpenChange: (open: boolean) => void;
     detail: ClaimDetail | null;
     loading?: boolean;
+    initialMode?: 'view' | 'edit';
     onFormAction?: (action: ClaimFormAction, values: ClaimFormValues, file?: File | null) => void;
     submitting?: boolean;
 }
@@ -41,6 +42,7 @@ export function ClaimViewModal({
     onOpenChange,
     detail,
     loading = false,
+    initialMode = 'view',
     onFormAction,
     submitting = false,
 }: ClaimViewModalProps) {
@@ -49,7 +51,7 @@ export function ClaimViewModal({
     const [file, setFile] = useState<File | null>(null);
 
     useEffect(() => {
-        if (detail?.is_editable_employee) {
+        if (detail) {
             setEditForm(claimDetailToFormValues(detail));
             setFile(null);
         } else {
@@ -60,7 +62,7 @@ export function ClaimViewModal({
 
     if (!open) return null;
 
-    const isEditMode = !!(detail?.is_editable_employee && editForm);
+    const isEditMode = initialMode === 'edit' && !!detail && !loading && !!editForm;
     const d = detail?.details ?? {};
 
     const travelTotal =

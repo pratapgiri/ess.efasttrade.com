@@ -41,7 +41,7 @@
     @if (app()->environment('local'))
         @viteReactRefresh
     @endif
-    @vite(['resources/js/app.tsx', "resources/js/pages/{$page['component']}.tsx"])
+    @vite(['resources/js/app.tsx', 'resources/css/app.css', 'resources/css/dark-mode.css'])
     <script>
         // Ensure base URL is correctly set for assets
         window.baseUrl = '{{ url('/') }}';

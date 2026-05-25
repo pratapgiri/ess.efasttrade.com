@@ -1986,11 +1986,11 @@ if (! function_exists('bootstrapClaimPermissions')) {
 
                 foreach ($roles as $role) {
                     if ($roleName === 'company') {
-                        $role->syncPermissions($allClaimPermissions);
+                        $role->givePermissionTo($allClaimPermissions);
                     } elseif ($roleName === 'employee') {
-                        $role->syncPermissions($employeePerms);
+                        $role->givePermissionTo($employeePerms);
                     } else {
-                        $role->syncPermissions($approverPerms);
+                        $role->givePermissionTo($approverPerms);
                     }
                 }
             }

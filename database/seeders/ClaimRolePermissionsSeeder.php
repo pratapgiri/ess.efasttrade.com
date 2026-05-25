@@ -12,6 +12,9 @@ use Spatie\Permission\PermissionRegistrar;
  * Seeds claim module permissions and assigns them to employee, manager, and HR roles
  * for every company in the system.
  *
+ * Adds claim permissions to roles (does not remove existing permissions).
+ * If manager/hr menus are missing, run RestoreCompanyRolePermissionsSeeder first.
+ *
  * Run: php artisan db:seed --class=ClaimRolePermissionsSeeder
  * Then: php artisan permission:cache-reset
  */
@@ -35,15 +38,14 @@ class ClaimRolePermissionsSeeder extends Seeder
             $this->assignRolePermissions($company->id, 'hr', $this->hrClaimPermissions());
         }
 
-        // Global company role (admin)
+        // Add claim permissions to global company role — do NOT syncPermissions (that wipes HR/menu perms)
         $companyRole = Role::where('name', 'company')->where('guard_name', 'web')->first();
         if ($companyRole) {
-            $companyRole->syncPermissions(
-                Permission::whereIn('name', $this->allClaimPermissionNames())
-                    ->where('guard_name', 'web')
-                    ->get()
-            );
-            $this->command?->info('Synced claim permissions on company role.');
+            $claimPermissions = Permission::whereIn('name', $this->allClaimPermissionNames())
+                ->where('guard_name', 'web')
+                ->get();
+            $companyRole->givePermissionTo($claimPermissions);
+            $this->command?->info('Added claim permissions to company role (existing permissions kept).');
         }
 
         app(PermissionRegistrar::class)->forgetCachedPermissions();
@@ -100,9 +102,10 @@ class ClaimRolePermissionsSeeder extends Seeder
             return;
         }
 
-        $role->syncPermissions($permissions);
+        // Add claim permissions without removing existing HR/menu permissions
+        $role->givePermissionTo($permissions);
 
-        $this->command?->line("  • {$roleName} @ company {$companyId}: ".implode(', ', $permissionNames));
+        $this->command?->line("  • {$roleName} @ company {$companyId}: added ".implode(', ', $permissionNames));
     }
 
     /** Employee — My Claims: create + view own claims only */

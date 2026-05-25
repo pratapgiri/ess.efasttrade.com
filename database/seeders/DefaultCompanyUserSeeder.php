@@ -28,6 +28,17 @@ class DefaultCompanyUserSeeder extends Seeder
         }
     }
 
+    /** Restore employee, manager, and HR role permissions for every company (no demo users created). */
+    public function restoreScopedRolesForAllCompanies(): void
+    {
+        $companies = User::where('type', 'company')->get();
+
+        foreach ($companies as $company) {
+            $this->createRoles($company);
+            $this->command?->line("  • Restored employee, manager, hr roles for company ID {$company->id}");
+        }
+    }
+
     private function createRoles($company)
     {
         // Employee Role

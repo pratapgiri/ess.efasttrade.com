@@ -24,7 +24,8 @@ class ClaimTestUsersSeeder extends Seeder
 
     public function run(): void
     {
-        $this->call(ClaimRolePermissionsSeeder::class);
+        // Full manager/hr/employee menus, then add claim permissions (must not syncPermissions-only)
+        $this->call(RestoreCompanyRolePermissionsSeeder::class);
 
         $company = User::where('type', 'company')->orderBy('id')->first();
 

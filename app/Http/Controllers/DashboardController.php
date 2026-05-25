@@ -31,18 +31,22 @@ class DashboardController extends Controller
             return $this->renderDashboard();
         }
 
-        // Check if user has dashboard permission (skip if permission doesn't exist)
-        
-        try {
-            if ($user->hasPermissionTo('manage-dashboard')) {
-                return $this->renderDashboard();
-            }
-        } catch (\Exception $e) {
-            // Permission doesn't exist, continue to dashboard for authenticated users
+        // Company owner account always gets dashboard
+        if ($user->type === 'company' || $user->hasRole('company')) {
             return $this->renderDashboard();
         }
 
-        // Redirect to first available page
+        // Users with dashboard permission (employee, HR, manager, etc.)
+        try {
+            if ($user->hasPermissionTo('manage-dashboard') || $user->hasPermissionTo('view-dashboard')) {
+                return $this->renderDashboard();
+            }
+        } catch (\Exception $e) {
+            // Permission tables missing during install — allow dashboard
+            return $this->renderDashboard();
+        }
+
+        // No dashboard permission: send to first module they can access
         return $this->redirectToFirstAvailablePage();
     }
 
@@ -51,11 +55,15 @@ class DashboardController extends Controller
         $user = auth()->user();
         //print_r($user); exit();
 
-        // Define available routes with their permissions
+        // Fallback routes when user has no dashboard permission
         $routes = [
             ['route' => 'hr.claims.index', 'permission' => 'manage-own-claims'],
             ['route' => 'hr.claims.index', 'permission' => 'view-claims'],
             ['route' => 'hr.claims.index', 'permission' => 'create-claims'],
+            ['route' => 'hr.leave-applications.index', 'permission' => 'manage-leave-applications'],
+            ['route' => 'hr.leave-applications.index', 'permission' => 'view-leave-applications'],
+            ['route' => 'hr.attendance-records.index', 'permission' => 'manage-attendance-records'],
+            ['route' => 'hr.attendance-records.index', 'permission' => 'view-attendance-records'],
             ['route' => 'users.index', 'permission' => 'manage-users'],
             ['route' => 'roles.index', 'permission' => 'manage-roles'],
             ['route' => 'plans.index', 'permission' => 'manage-plans'],
@@ -63,14 +71,16 @@ class DashboardController extends Controller
             ['route' => 'settings.index', 'permission' => 'manage-settings'],
         ];
 
-        // Find first available route
         foreach ($routes as $routeData) {
-            if ($user->hasPermissionTo($routeData['permission'])) {
-                return redirect()->route($routeData['route']);
+            try {
+                if ($user->hasPermissionTo($routeData['permission'])) {
+                    return redirect()->route($routeData['route']);
+                }
+            } catch (\Exception $e) {
+                continue;
             }
         }
 
-        // If no permissions found, logout user
         auth()->logout();
 
         return redirect()->route('login')->with('error', __('No access permissions found.'));

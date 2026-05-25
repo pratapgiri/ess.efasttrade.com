@@ -51,6 +51,7 @@ export default function MyClaims() {
 
     const [createOpen, setCreateOpen] = useState(false);
     const [viewOpen, setViewOpen] = useState(false);
+    const [modalMode, setModalMode] = useState<'view' | 'edit'>('view');
     const [selectedClaim, setSelectedClaim] = useState<ClaimDetail | null>(null);
     const [loadingDetail, setLoadingDetail] = useState(false);
     const [submitting, setSubmitting] = useState(false);
@@ -143,6 +144,7 @@ export default function MyClaims() {
 
     const handleAction = async (action: string, row: ClaimListItem) => {
         if (action === 'view' || action === 'edit') {
+            setModalMode(action === 'edit' ? 'edit' : 'view');
             await loadClaimDetail(row);
         }
     };
@@ -274,6 +276,7 @@ export default function MyClaims() {
                 onOpenChange={setViewOpen}
                 detail={selectedClaim}
                 loading={loadingDetail}
+                initialMode={modalMode}
                 onFormAction={handleEditSubmit}
                 submitting={submitting}
             />
